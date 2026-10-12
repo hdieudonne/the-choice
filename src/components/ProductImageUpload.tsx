@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Loader2, Upload, X } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle2, Upload, X } from "lucide-react";
 
 type ProductImageUploadProps = {
   currentImageUrl?: string;
@@ -15,6 +15,7 @@ export default function ProductImageUpload({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Keep in sync when the prop changes (edit page re-render)
   useEffect(() => {
@@ -23,6 +24,25 @@ export default function ProductImageUpload({
       setUploadedUrl(currentImageUrl);
     }
   }, [currentImageUrl, uploading]);
+
+  // Prevent submitting the parent form while image is uploading
+  useEffect(() => {
+    const form = containerRef.current?.closest("form");
+    if (!form) return;
+
+    function handleSubmit(e: SubmitEvent) {
+      if (uploading) {
+        e.preventDefault();
+        e.stopPropagation();
+        setError("Please wait until image upload finishes before saving.");
+      }
+    }
+
+    form.addEventListener("submit", handleSubmit, true);
+    return () => {
+      form.removeEventListener("submit", handleSubmit, true);
+    };
+  }, [uploading]);
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -33,7 +53,6 @@ export default function ProductImageUpload({
     setPreview(objectUrl);
     setError("");
     setUploading(true);
-    setUploadedUrl("");
 
     try {
       const body = new FormData();
@@ -46,16 +65,17 @@ export default function ProductImageUpload({
 
       const data = await res.json();
 
-      if (!res.ok || data.error) {
+      if (!res.ok || data.error || !data.url) {
         throw new Error(data.error ?? "Upload failed.");
       }
 
       setUploadedUrl(data.url);
+      setPreview(data.url);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed. Try again.");
+      const msg = err instanceof Error ? err.message : "Upload failed. Try again.";
+      setError(msg);
       setPreview(currentImageUrl);
       setUploadedUrl(currentImageUrl);
-      // Reset file input
       if (inputRef.current) inputRef.current.value = "";
     } finally {
       setUploading(false);
@@ -71,8 +91,8 @@ export default function ProductImageUpload({
   }
 
   return (
-    <div className="space-y-4">
-      {/* Hidden field that goes to the server action */}
+    <div ref={containerRef} className="space-y-4">
+      {/* Hidden field that sends imageUrl to the server action */}
       <input type="hidden" name="imageUrl" value={uploadedUrl} />
 
       {/* Preview area */}
@@ -86,9 +106,9 @@ export default function ProductImageUpload({
             />
             {/* Uploading overlay */}
             {uploading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-black/50">
-                <Loader2 size={24} className="animate-spin text-white" />
-                <p className="mt-2 text-xs text-white">Uploading…</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-black/60 backdrop-blur-xs">
+                <Loader2 size={26} className="animate-spin text-white" />
+                <p className="mt-2 text-xs font-medium text-white">Uploading to Cloudinary…</p>
               </div>
             )}
             {/* Clear button (only when not uploading) */}
@@ -106,30 +126,33 @@ export default function ProductImageUpload({
         ) : (
           <div className="flex h-48 w-48 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-800/50 text-stone-400 dark:text-stone-500">
             <Upload size={24} />
-            <p className="text-xs">No image</p>
+            <p className="text-xs">No image selected</p>
           </div>
         )}
       </div>
 
-      {/* Upload status */}
+      {/* Upload in progress banner */}
       {uploading && (
-        <p className="flex items-center gap-2 text-xs text-[#788568] dark:text-[#8da47a]">
-          <Loader2 size={13} className="animate-spin" />
-          Uploading to cloud…
-        </p>
+        <div className="flex items-center gap-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 px-3 py-2 text-xs font-medium text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+          <Loader2 size={14} className="animate-spin" />
+          <span>Uploading to cloud. Please wait before saving the product…</span>
+        </div>
       )}
 
+      {/* Upload success message */}
       {!uploading && uploadedUrl && uploadedUrl !== currentImageUrl && (
-        <p className="text-xs text-green-700 dark:text-green-400">
-          ✓ Image uploaded successfully
-        </p>
+        <div className="flex items-center gap-2 text-xs text-green-700 dark:text-green-400 font-medium">
+          <CheckCircle2 size={14} />
+          <span>Image ready! Cloud URL is attached to this product.</span>
+        </div>
       )}
 
-      {/* Error */}
+      {/* Error banner */}
       {error && (
-        <p role="alert" className="text-xs text-red-600 dark:text-red-400">
-          {error}
-        </p>
+        <div role="alert" className="flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-900/20 px-3 py-2 text-xs text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
+          <AlertCircle size={14} />
+          <span>{error}</span>
+        </div>
       )}
 
       {/* File picker */}
@@ -157,9 +180,32 @@ export default function ProductImageUpload({
         />
 
         <p className="mt-2 text-xs text-stone-500 dark:text-stone-500">
-          JPEG, PNG, or WebP · Max 5 MB · Automatically uploaded to cloud
+          JPEG, PNG, or WebP · Max 5 MB · Automatically uploaded to Cloudinary
         </p>
+      </div>
+
+      {/* Optional fallback direct URL input in case user already has a Cloudinary URL */}
+      <div className="pt-2">
+        <label
+          htmlFor="directImageUrl"
+          className="mb-1 block text-xs text-stone-500 dark:text-stone-400"
+        >
+          Or paste image URL directly:
+        </label>
+        <input
+          id="directImageUrl"
+          type="url"
+          value={uploadedUrl}
+          onChange={(e) => {
+            const url = e.target.value.trim();
+            setUploadedUrl(url);
+            setPreview(url);
+          }}
+          placeholder="https://res.cloudinary.com/..."
+          className="block w-full max-w-md rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-1.5 text-xs text-stone-800 dark:text-stone-200 outline-none focus:border-[#788568] dark:focus:border-[#8da47a]"
+        />
       </div>
     </div>
   );
 }
+

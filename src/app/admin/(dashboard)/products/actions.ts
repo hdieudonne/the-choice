@@ -107,32 +107,41 @@ export async function createProduct(formData: FormData) {
     redirect("/admin/products/new?error=DuplicateVariants");
   }
 
+  console.log(`[createProduct] Raw imageUrl received from form:`, JSON.stringify(imageUrl));
+
   try {
-    await prisma.product.create({
-      data: {
-        name,
-        slug: createSlug(name),
-        description: description || null,
-        category,
-        price,
-
-        ...(imageUrl
-          ? {
-              images: {
-                create: {
-                  imageUrl,
-                  alt: imageAlt || name,
-                  sortOrder: 0,
-                },
-              },
-            }
-          : {}),
-
-        variants: {
-          create: parsed.data.variants,
+    const product = await prisma.$transaction(async (tx) => {
+      const newProduct = await tx.product.create({
+        data: {
+          name,
+          slug: createSlug(name),
+          description: description || null,
+          category,
+          price,
+          variants: {
+            create: parsed.data.variants,
+          },
         },
-      },
+      });
+
+      if (imageUrl && imageUrl.trim().length > 0) {
+        console.log(`[createProduct] Inserting ProductImage record for product ${newProduct.id}:`, imageUrl);
+        await tx.productImage.create({
+          data: {
+            productId: newProduct.id,
+            imageUrl: imageUrl.trim(),
+            alt: imageAlt || name,
+            sortOrder: 0,
+          },
+        });
+      } else {
+        console.warn(`[createProduct] No imageUrl provided for product "${name}". Skipping ProductImage insertion.`);
+      }
+
+      return newProduct;
     });
+
+    console.log(`[createProduct] Successfully created product ${product.id}`);
   } catch (error) {
     console.error("Failed to create product:", error);
     redirect("/admin/products/new?error=SaveFailed");
@@ -246,6 +255,7 @@ export async function updateProduct(formData: FormData) {
 
   // Prevent duplicate image records when saving an unchanged URL.
   const currentImage = existingProduct.images[0];
+  console.log(`[updateProduct] Updating product id=${id} with imageUrl:`, imageUrl ? imageUrl : "(none)");
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -261,6 +271,7 @@ export async function updateProduct(formData: FormData) {
 
       if (imageUrl) {
         if (currentImage) {
+          console.log(`[updateProduct] Updating existing ProductImage id=${currentImage.id}`);
           await tx.productImage.update({
             where: { id: currentImage.id },
             data: {
@@ -270,6 +281,7 @@ export async function updateProduct(formData: FormData) {
             },
           });
         } else {
+          console.log(`[updateProduct] Creating new ProductImage for product id=${id}`);
           await tx.productImage.create({
             data: {
               productId: id,
@@ -280,6 +292,7 @@ export async function updateProduct(formData: FormData) {
           });
         }
       } else if (currentImage) {
+        console.log(`[updateProduct] Deleting ProductImage id=${currentImage.id}`);
         await tx.productImage.delete({
           where: { id: currentImage.id },
         });

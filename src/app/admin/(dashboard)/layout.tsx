@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
-import AdminSidebar from "@/components/AdminSidebar";
+import AdminShell from "@/components/AdminShell";
 
 export const instant = false;
 
@@ -28,17 +28,8 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#faf9f6] dark:bg-[#111210]">
-      {/* Sidebar */}
-      <AdminSidebar
-        adminName={admin.name}
-        adminEmail={admin.email}
-      />
-
-      {/* Main content area */}
-      <main className="flex-1 overflow-y-auto">
-        {children}
-      </main>
-    </div>
+    <AdminShell adminName={admin.name} adminEmail={admin.email}>
+      {children}
+    </AdminShell>
   );
 }
