@@ -1,10 +1,9 @@
-
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MessageCircle, ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
-
+export const instant = false;
 
 const WHATSAPP_NUMBER = "2507XXXXXXXX";
 
@@ -58,16 +57,16 @@ export default async function ProductDetailPage({
     `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
   return (
-    <main className="min-h-screen bg-[#faf9f6] text-[#22251f]">
-      <header className="border-b border-black/5">
+    <main className="min-h-screen bg-[#faf9f6] dark:bg-[#111210] text-[#22251f] dark:text-[#e8e8e2]">
+      <header className="border-b border-black/5 dark:border-white/5">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-8">
           <Link href="/" className="text-2xl font-black tracking-[-0.07em]">
-            SOKO<span className="text-[#788568]">STYLE.</span>
+            SOKO<span className="text-[#788568] dark:text-[#8da47a]">STYLE.</span>
           </Link>
 
           <Link
             href="/#collection"
-            className="text-sm transition hover:text-[#788568]"
+            className="text-sm transition hover:text-[#788568] dark:hover:text-[#8da47a]"
           >
             Shop collection
           </Link>
@@ -77,7 +76,7 @@ export default async function ProductDetailPage({
       <div className="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-12">
         <Link
           href="/#collection"
-          className="mb-8 inline-flex items-center gap-2 text-sm text-[#77786f] hover:text-[#263b2d]"
+          className="mb-8 inline-flex items-center gap-2 text-sm text-[#77786f] dark:text-[#9a9c93] hover:text-[#263b2d] dark:hover:text-[#8da47a]"
         >
           <ArrowLeft size={16} />
           Back to collection
@@ -89,7 +88,7 @@ export default async function ProductDetailPage({
               product.images.map((image) => (
                 <div
                   key={image.id}
-                  className="aspect-[4/5] overflow-hidden rounded-xl bg-[#eeede7]"
+                  className="aspect-[4/5] overflow-hidden rounded-xl bg-[#eeede7] dark:bg-[#1e211c]"
                 >
                   <img
                     src={image.imageUrl}
@@ -99,31 +98,31 @@ export default async function ProductDetailPage({
                 </div>
               ))
             ) : (
-              <div className="flex aspect-[4/5] items-center justify-center rounded-xl bg-[#eeede7] text-sm text-[#77786f] sm:col-span-2">
+              <div className="flex aspect-[4/5] items-center justify-center rounded-xl bg-[#eeede7] dark:bg-[#1e211c] text-sm text-[#77786f] dark:text-[#9a9c93] sm:col-span-2">
                 Product photo coming soon
               </div>
             )}
           </div>
 
           <div className="py-2 md:py-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#788568]">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#788568] dark:text-[#8da47a]">
               {product.category}
             </p>
 
-            <h1 className="mt-4 text-3xl font-medium tracking-[-0.04em] md:text-5xl">
+            <h1 className="mt-4 text-3xl font-medium tracking-[-0.04em] text-stone-900 dark:text-stone-100 md:text-5xl">
               {product.name}
             </h1>
 
-            <p className="mt-5 text-xl font-semibold">
+            <p className="mt-5 text-xl font-semibold text-stone-900 dark:text-stone-100">
               {formatPrice(product.price)}
             </p>
 
-            <p className="mt-6 whitespace-pre-line text-sm leading-7 text-[#696b62]">
+            <p className="mt-6 whitespace-pre-line text-sm leading-7 text-[#696b62] dark:text-[#9a9c93]">
               {product.description ?? "Contact us to learn more about this product."}
             </p>
 
-            <div className="mt-8 border-t border-black/10 pt-6">
-              <h2 className="text-sm font-semibold">Available sizes</h2>
+            <div className="mt-8 border-t border-black/10 dark:border-white/10 pt-6">
+              <h2 className="text-sm font-semibold text-stone-900 dark:text-stone-100">Available sizes</h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {sizes.length > 0 ? (
                   sizes.map((size) => {
@@ -137,8 +136,8 @@ export default async function ProductDetailPage({
                         key={size}
                         className={`rounded-full border px-4 py-2 text-sm ${
                           available
-                            ? "border-black/10"
-                            : "border-black/5 text-[#999a91] line-through"
+                            ? "border-black/10 dark:border-white/10 text-stone-800 dark:text-stone-200"
+                            : "border-black/5 dark:border-white/5 text-[#999a91] dark:text-stone-600 line-through"
                         }`}
                       >
                         {size}
@@ -146,7 +145,7 @@ export default async function ProductDetailPage({
                     );
                   })
                 ) : (
-                  <p className="text-sm text-[#77786f]">
+                  <p className="text-sm text-[#77786f] dark:text-[#9a9c93]">
                     Contact us for sizing information.
                   </p>
                 )}
@@ -154,30 +153,30 @@ export default async function ProductDetailPage({
             </div>
 
             <div className="mt-6">
-              <h2 className="text-sm font-semibold">Available colors</h2>
+              <h2 className="text-sm font-semibold text-stone-900 dark:text-stone-100">Available colors</h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {colors.length > 0 ? (
                   colors.map((color) => (
                     <span
                       key={color}
-                      className="rounded-full border border-black/10 px-4 py-2 text-sm"
+                      className="rounded-full border border-black/10 dark:border-white/10 px-4 py-2 text-sm text-stone-800 dark:text-stone-200"
                     >
                       {color}
                     </span>
                   ))
                 ) : (
-                  <p className="text-sm text-[#77786f]">
+                  <p className="text-sm text-[#77786f] dark:text-[#9a9c93]">
                     Contact us for color options.
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="mt-8 rounded-xl bg-[#e9e9df] p-4">
-              <p className="text-sm font-medium">
+            <div className="mt-8 rounded-xl bg-[#e9e9df] dark:bg-[#1e211c] p-4">
+              <p className="text-sm font-medium text-stone-900 dark:text-stone-100">
                 {totalStock > 0 ? "Available to enquire about" : "Stock unavailable"}
               </p>
-              <p className="mt-1 text-xs leading-5 text-[#696b62]">
+              <p className="mt-1 text-xs leading-5 text-[#696b62] dark:text-[#9a9c93]">
                 {totalStock > 0
                   ? "Message us to confirm your preferred size and color before visiting or arranging delivery."
                   : "Please contact the shop to ask about restocking."}
@@ -188,20 +187,20 @@ export default async function ProductDetailPage({
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 flex w-full items-center justify-center gap-3 rounded-full bg-[#263b2d] px-6 py-4 text-sm font-medium text-white transition hover:bg-[#3b5541]"
+              className="mt-6 flex w-full items-center justify-center gap-3 rounded-full bg-[#263b2d] dark:bg-[#3a5543] px-6 py-4 text-sm font-medium text-white transition hover:bg-[#3b5541] dark:hover:bg-[#4a6852]"
             >
               <MessageCircle size={19} />
               Ask about this product on WhatsApp
             </a>
 
-            <p className="mt-4 text-center text-xs leading-5 text-[#77786f]">
+            <p className="mt-4 text-center text-xs leading-5 text-[#77786f] dark:text-[#9a9c93]">
               Delivery and store pickup can be arranged directly with the shop.
             </p>
           </div>
         </div>
       </div>
 
-      <footer className="mt-12 border-t border-black/10 px-5 py-8 text-center text-xs text-[#77786f]">
+      <footer className="mt-12 border-t border-black/10 dark:border-white/10 px-5 py-8 text-center text-xs text-[#77786f] dark:text-[#9a9c93]">
         © {new Date().getFullYear()} SokoStyle. All rights reserved.
       </footer>
     </main>

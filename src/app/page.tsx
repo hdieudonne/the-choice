@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import HomeClient from "@/components/HomeClient";
 
+export const instant = false;
+
 
 
 export default async function Home() {
