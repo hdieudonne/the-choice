@@ -14,8 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SokoStyle — Fashion Made for You",
-  description: "Discover clothing, shoes, bags and accessories at SokoStyle.",
+  title: "The Choice Style — Fashion Made for You",
+  description: "Discover clothing, shoes, bags and accessories at The Choice Style.",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({

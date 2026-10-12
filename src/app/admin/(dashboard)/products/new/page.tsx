@@ -48,7 +48,7 @@ export default async function NewProductPage({
             Add a product
           </h1>
           <p className="mt-2 text-sm leading-6 text-stone-500 dark:text-stone-400">
-            Add clothing, shoes, bags, or accessories to your SokoStyle catalog.
+            Add clothing, shoes, bags, or accessories to your The Choice Style catalog.
           </p>
         </header>
       </div>

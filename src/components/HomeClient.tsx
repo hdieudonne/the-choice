@@ -16,7 +16,7 @@ import {
 import type { Product } from "@/lib/types";
 import { useTheme } from "@/components/ThemeProvider";
 
-const WHATSAPP_NUMBER = "2507XXXXXXXX"; // Replace with the shop owner's number
+const WHATSAPP_NUMBER = "250780330338"; // The Choice Style WhatsApp number
 
 const categories = ["All", "Clothing", "Shoes", "Accessories"];
 
@@ -25,13 +25,11 @@ function formatPrice(price: number) {
 }
 
 function getWhatsAppLink(product: Product) {
-  const ownerNumber = "2507XXXXXXXX";
-
   const sizes = [...new Set(product.variants.map((v) => v.size))];
   const colors = [...new Set(product.variants.map((v) => v.color))];
 
   const message = [
-    "Hello SokoStyle!",
+    "Hello The Choice Style!",
     `I am interested in: ${product.name}.`,
     `Price: ${formatPrice(product.price)}.`,
     `Available sizes: ${sizes.join(", ") || "Please confirm"}.`,
@@ -40,7 +38,7 @@ function getWhatsAppLink(product: Product) {
     "Please confirm availability.",
   ].join("\n");
 
-  return `https://wa.me/${ownerNumber}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
 export default function Home({ products }: { products: Product[] }) {
@@ -66,14 +64,21 @@ export default function Home({ products }: { products: Product[] }) {
     <main className="min-h-screen bg-[#faf9f6] dark:bg-[#111210] text-[#22251f] dark:text-[#e8e8e2]">
       {/* Announcement bar */}
       <div className="bg-[#263b2d] dark:bg-[#1e2e22] px-4 py-2.5 text-center text-xs tracking-[0.15em] text-white">
-        YOUR STYLE, YOUR STORY — WELCOME TO SOKOSTYLE
+        YOUR STYLE, YOUR STORY — WELCOME TO THE CHOICE STYLE
       </div>
 
       {/* Navigation */}
       <header className="sticky top-0 z-30 border-b border-black/5 dark:border-white/5 bg-[#faf9f6]/95 dark:bg-[#111210]/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-8">
-          <a href="#" className="text-2xl font-black tracking-[-0.07em]">
-            SOKO<span className="text-[#788568] dark:text-[#8da47a]">STYLE.</span>
+          <a href="#" className="flex items-center gap-2.5">
+            <img
+              src="/logo.svg"
+              alt="The Choice Style logo"
+              className="h-8 w-8 rounded-lg object-contain shadow-xs"
+            />
+            <span className="text-2xl font-black tracking-[-0.07em]">
+              THE CHOICE<span className="text-[#788568] dark:text-[#8da47a]">.</span>
+            </span>
           </a>
 
           <nav className="hidden items-center gap-8 text-sm md:flex">
@@ -314,7 +319,7 @@ export default function Home({ products }: { products: Product[] }) {
           </div>
           <div>
             <p className="text-sm leading-7 text-[#5d6157] dark:text-[#9a9c93] md:text-base">
-              SokoStyle brings together everyday fashion, footwear, and
+              The Choice Style brings together everyday fashion, footwear, and
               accessories in one convenient place. Browse our collection, find
               your favorite pieces, and message us directly to check
               availability or arrange delivery and pickup.
@@ -335,8 +340,15 @@ export default function Home({ products }: { products: Product[] }) {
         <div className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
           <div className="grid gap-10 md:grid-cols-3">
             <div>
-              <a href="#" className="text-2xl font-black tracking-[-0.07em]">
-                SOKO<span className="text-[#bdc6ae]">STYLE.</span>
+              <a href="#" className="flex items-center gap-2.5">
+                <img
+                  src="/logo.svg"
+                  alt="The Choice Style logo"
+                  className="h-8 w-8 rounded-lg object-contain shadow-xs brightness-110"
+                />
+                <span className="text-2xl font-black tracking-[-0.07em]">
+                  THE CHOICE<span className="text-[#bdc6ae]">.</span>
+                </span>
               </a>
               <p className="mt-4 max-w-xs text-sm leading-6 text-white/65">
                 Everyday fashion, carefully chosen for your style.
@@ -348,7 +360,7 @@ export default function Home({ products }: { products: Product[] }) {
               <div className="mt-4 flex flex-col gap-3 text-sm text-white/65">
                 <a href="#home" className="hover:text-white">Home</a>
                 <a href="#collection" className="hover:text-white">Shop collection</a>
-                <a href="#about" className="hover:text-white">About SokoStyle</a>
+                <a href="#about" className="hover:text-white">About The Choice Style</a>
               </div>
             </div>
 
@@ -359,7 +371,7 @@ export default function Home({ products }: { products: Product[] }) {
                 delivery and pickup.
               </p>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hello SokoStyle! I would like to make an enquiry.")}`}
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hello The Choice Style! I would like to make an enquiry.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-[#263b2d] transition hover:bg-[#e9e9df]"
@@ -371,7 +383,7 @@ export default function Home({ products }: { products: Product[] }) {
           </div>
 
           <div className="mt-12 border-t border-white/15 pt-6 text-xs text-white/50">
-            © {new Date().getFullYear()} SokoStyle. All rights reserved.
+            © {new Date().getFullYear()} The Choice Style. All rights reserved.
           </div>
         </div>
       </footer>

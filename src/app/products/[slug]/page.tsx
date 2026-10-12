@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 
 export const instant = false;
 
-const WHATSAPP_NUMBER = "2507XXXXXXXX";
+const WHATSAPP_NUMBER = "250780330338";
 
 function formatPrice(price: number) {
   return `RWF ${price.toLocaleString("en-US")}`;
@@ -46,7 +46,7 @@ export default async function ProductDetailPage({
   );
 
   const message = [
-    "Hello SokoStyle!",
+    "Hello The Choice Style!",
     `I am interested in: ${product.name}.`,
     `Price: ${formatPrice(product.price)}.`,
     `Product link: ${product.slug}`,
@@ -60,8 +60,15 @@ export default async function ProductDetailPage({
     <main className="min-h-screen bg-[#faf9f6] dark:bg-[#111210] text-[#22251f] dark:text-[#e8e8e2]">
       <header className="border-b border-black/5 dark:border-white/5">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-8">
-          <Link href="/" className="text-2xl font-black tracking-[-0.07em]">
-            SOKO<span className="text-[#788568] dark:text-[#8da47a]">STYLE.</span>
+          <Link href="/" className="flex items-center gap-2.5">
+            <img
+              src="/logo.svg"
+              alt="The Choice Style logo"
+              className="h-8 w-8 rounded-lg object-contain shadow-xs"
+            />
+            <span className="text-2xl font-black tracking-[-0.07em]">
+              THE CHOICE<span className="text-[#788568] dark:text-[#8da47a]">.</span>
+            </span>
           </Link>
 
           <Link
@@ -201,7 +208,7 @@ export default async function ProductDetailPage({
       </div>
 
       <footer className="mt-12 border-t border-black/10 dark:border-white/10 px-5 py-8 text-center text-xs text-[#77786f] dark:text-[#9a9c93]">
-        © {new Date().getFullYear()} SokoStyle. All rights reserved.
+        © {new Date().getFullYear()} The Choice Style. All rights reserved.
       </footer>
     </main>
   );

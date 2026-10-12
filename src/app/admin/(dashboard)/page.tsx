@@ -74,7 +74,7 @@ export default async function AdminDashboardPage() {
       {/* Page header */}
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#788568] dark:text-[#8da47a]">
-          SokoStyle Admin
+          The Choice Style Admin
         </p>
         <h1 className="mt-2 text-3xl font-semibold text-[#263b2d] dark:text-stone-100">
           Dashboard

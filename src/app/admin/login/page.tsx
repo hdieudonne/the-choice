@@ -49,13 +49,20 @@ function LoginForm() {
         href="/"
         className="text-sm text-stone-500 dark:text-stone-400 transition hover:text-stone-900 dark:hover:text-stone-100"
       >
-        ← Back to SokoStyle
+        ← Back to The Choice Style
       </Link>
 
       <div className="mt-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#788568] dark:text-[#8da47a]">
-          SokoStyle
-        </p>
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/logo.svg"
+            alt="The Choice Style logo"
+            className="h-9 w-9 rounded-xl object-contain shadow-xs"
+          />
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#788568] dark:text-[#8da47a]">
+            The Choice Style
+          </p>
+        </div>
 
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[#263b2d] dark:text-stone-100">
           Admin sign in

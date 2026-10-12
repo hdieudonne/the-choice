@@ -36,8 +36,15 @@ export default function AdminSidebar({ adminName, adminEmail }: AdminSidebarProp
     <aside className="flex h-full w-64 flex-shrink-0 flex-col border-r border-stone-200 dark:border-stone-800 bg-white dark:bg-[#141614]">
       {/* Logo */}
       <div className="flex h-16 items-center border-b border-stone-200 dark:border-stone-800 px-6">
-        <Link href="/admin" className="text-xl font-black tracking-[-0.07em] text-[#263b2d] dark:text-[#8da47a]">
-          SOKO<span className="text-[#788568] dark:text-[#6b8a5a]">STYLE.</span>
+        <Link href="/admin" className="flex items-center gap-2.5">
+          <img
+            src="/logo.svg"
+            alt="The Choice Style logo"
+            className="h-8 w-8 rounded-lg object-contain shadow-xs"
+          />
+          <span className="text-lg font-black tracking-[-0.05em] text-[#263b2d] dark:text-[#8da47a]">
+            THE CHOICE<span className="text-[#788568] dark:text-[#6b8a5a]">.</span>
+          </span>
         </Link>
         <span className="ml-2 rounded-full bg-[#263b2d]/10 dark:bg-[#3a5543]/40 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#263b2d] dark:text-[#8da47a]">
           Admin
