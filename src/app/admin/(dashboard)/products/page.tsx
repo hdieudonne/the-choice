@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { toggleProductStatus, deleteProduct } from "./actions";
 import DeleteProductButton from "./delete-product-button";
+
+export const instant = false;
 
 type ProductsPageProps = {
   searchParams: Promise<{
@@ -14,6 +17,10 @@ export default async function AdminProductsPage({
   searchParams,
 }: ProductsPageProps) {
   const query = await searchParams;
+
+  // Opt out of prerendering — Prisma queries must run at request time, not
+  // during prefetch/prerender (Next.js 16 "blocking-prefetch-dynamic" error).
+  await connection();
 
   const products = await prisma.product.findMany({
     orderBy: { createdAt: "desc" },

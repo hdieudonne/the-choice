@@ -33,10 +33,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { url } = await uploadProductImage(file);
+    const { url, publicId } = await uploadProductImage(file);
 
-    return NextResponse.json({ url });
+    return NextResponse.json({ url, publicId });
   } catch (error) {
+    console.error("[uploadProductImage error]:", error);
     const message =
       error instanceof Error ? error.message : "Upload failed.";
     return NextResponse.json({ error: message }, { status: 500 });

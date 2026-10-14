@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Package, PackageCheck, PackageX, AlertTriangle, Plus, ArrowRight } from "lucide-react";
 
+export const instant = false;
+
 export default async function AdminDashboardPage() {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email?.trim().toLowerCase();

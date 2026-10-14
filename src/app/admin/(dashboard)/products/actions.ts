@@ -25,6 +25,7 @@ const productSchema = z.object({
     .max(2000)
     .url()
     .or(z.literal("")),
+  imagePublicId: z.string().trim().max(500).optional().default(""),
   imageAlt: z.string().trim().max(200),
   variants: z.array(variantSchema).max(100),
 });
@@ -80,6 +81,7 @@ export async function createProduct(formData: FormData) {
     category: formData.get("category"),
     price: Number(rawPrice),
     imageUrl: formData.get("imageUrl") ?? "",
+    imagePublicId: formData.get("imagePublicId") ?? "",
     imageAlt: formData.get("imageAlt") ?? "",
     variants,
   });
@@ -94,6 +96,7 @@ export async function createProduct(formData: FormData) {
     category,
     price,
     imageUrl,
+    imagePublicId,
     imageAlt,
   } = parsed.data;
 
@@ -130,6 +133,7 @@ export async function createProduct(formData: FormData) {
           data: {
             productId: newProduct.id,
             imageUrl: imageUrl.trim(),
+            publicId: imagePublicId || null,
             alt: imageAlt || name,
             sortOrder: 0,
           },
@@ -164,6 +168,7 @@ const updateProductSchema = z.object({
   category: z.string().trim().min(2).max(60),
   price: z.number().int().positive().max(100_000_000),
   imageUrl: z.string().trim().max(2000).url().or(z.literal("")),
+  imagePublicId: z.string().trim().max(500).optional().default(""),
   imageAlt: z.string().trim().max(200),
   variants: z.array(
     z.object({
@@ -195,6 +200,7 @@ export async function updateProduct(formData: FormData) {
     category: formData.get("category"),
     price: Number(formData.get("price")),
     imageUrl: formData.get("imageUrl") ?? "",
+    imagePublicId: formData.get("imagePublicId") ?? "",
     imageAlt: formData.get("imageAlt") ?? "",
     variants,
   });
@@ -214,6 +220,7 @@ export async function updateProduct(formData: FormData) {
     category,
     price,
     imageUrl,
+    imagePublicId,
     imageAlt,
   } = parsed.data;
 
@@ -276,6 +283,7 @@ export async function updateProduct(formData: FormData) {
             where: { id: currentImage.id },
             data: {
               imageUrl,
+              publicId: imagePublicId || null,
               alt: imageAlt || name,
               sortOrder: 0,
             },
@@ -286,6 +294,7 @@ export async function updateProduct(formData: FormData) {
             data: {
               productId: id,
               imageUrl,
+              publicId: imagePublicId || null,
               alt: imageAlt || name,
               sortOrder: 0,
             },

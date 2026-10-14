@@ -1,34 +1,66 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Loader2, AlertCircle, CheckCircle2, Upload, X } from "lucide-react";
 
 type ProductImageUploadProps = {
   currentImageUrl?: string;
+  currentPublicId?: string;
 };
 
 export default function ProductImageUpload({
   currentImageUrl = "",
+  currentPublicId = "",
 }: ProductImageUploadProps) {
   const [preview, setPreview] = useState(currentImageUrl);
   const [uploadedUrl, setUploadedUrl] = useState(currentImageUrl);
+  const [uploadedPublicId, setUploadedPublicId] = useState(currentPublicId);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  // Refs for the hidden inputs so we can imperatively update their DOM value
+  // property — React controlled hidden inputs don't reliably update the DOM
+  // attribute that the browser reads when building FormData on submit.
+  const hiddenUrlRef = useRef<HTMLInputElement>(null);
+  const hiddenPublicIdRef = useRef<HTMLInputElement>(null);
 
-  // Keep in sync when the prop changes (edit page re-render)
+  // Only sync if the prop actually changes from the outside (e.g. navigation between products)
+  const prevPropsRef = useRef({ currentImageUrl, currentPublicId });
   useEffect(() => {
-    if (!uploading) {
+    if (
+      prevPropsRef.current.currentImageUrl !== currentImageUrl ||
+      prevPropsRef.current.currentPublicId !== currentPublicId
+    ) {
+      prevPropsRef.current = { currentImageUrl, currentPublicId };
       setPreview(currentImageUrl);
       setUploadedUrl(currentImageUrl);
+      setUploadedPublicId(currentPublicId);
     }
-  }, [currentImageUrl, uploading]);
+  }, [currentImageUrl, currentPublicId]);
+
+  // Imperatively keep the hidden input DOM value properties in sync.
+  // useLayoutEffect runs synchronously after DOM mutations but before the
+  // browser paints — this guarantees the hidden input carries the latest URL
+  // even if the user submits the form in the same tick as state update.
+  useLayoutEffect(() => {
+    if (hiddenUrlRef.current) hiddenUrlRef.current.value = uploadedUrl;
+  }, [uploadedUrl]);
+
+  useLayoutEffect(() => {
+    if (hiddenPublicIdRef.current) hiddenPublicIdRef.current.value = uploadedPublicId;
+  }, [uploadedPublicId]);
 
   // Prevent submitting the parent form while image is uploading
   useEffect(() => {
     const form = containerRef.current?.closest("form");
     if (!form) return;
+
+    // Disable all submit buttons inside the parent form while uploading
+    const submitButtons = form.querySelectorAll<HTMLButtonElement>("button[type='submit']");
+    submitButtons.forEach((btn) => {
+      btn.disabled = uploading;
+    });
 
     function handleSubmit(e: SubmitEvent) {
       if (uploading) {
@@ -41,6 +73,9 @@ export default function ProductImageUpload({
     form.addEventListener("submit", handleSubmit, true);
     return () => {
       form.removeEventListener("submit", handleSubmit, true);
+      submitButtons.forEach((btn) => {
+        btn.disabled = false;
+      });
     };
   }, [uploading]);
 
@@ -70,12 +105,14 @@ export default function ProductImageUpload({
       }
 
       setUploadedUrl(data.url);
+      setUploadedPublicId(data.publicId ?? "");
       setPreview(data.url);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Upload failed. Try again.";
       setError(msg);
       setPreview(currentImageUrl);
       setUploadedUrl(currentImageUrl);
+      setUploadedPublicId(currentPublicId);
       if (inputRef.current) inputRef.current.value = "";
     } finally {
       setUploading(false);
@@ -86,14 +123,19 @@ export default function ProductImageUpload({
   function clearImage() {
     setPreview("");
     setUploadedUrl("");
+    setUploadedPublicId("");
     setError("");
     if (inputRef.current) inputRef.current.value = "";
   }
 
   return (
     <div ref={containerRef} className="space-y-4">
-      {/* Hidden field that sends imageUrl to the server action */}
-      <input type="hidden" name="imageUrl" value={uploadedUrl} />
+      {/* Hidden fields that send imageUrl and publicId to the server action.
+          The DOM .value property is kept in sync via useLayoutEffect (see above),
+          which runs synchronously before paint so the browser always reads the
+          latest URL when building FormData on submit. */}
+      <input ref={hiddenUrlRef} type="hidden" name="imageUrl" value={uploadedUrl} readOnly />
+      <input ref={hiddenPublicIdRef} type="hidden" name="imagePublicId" value={uploadedPublicId} readOnly />
 
       {/* Preview area */}
       <div className="relative h-48 w-48">

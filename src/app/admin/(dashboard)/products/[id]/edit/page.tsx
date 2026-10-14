@@ -6,6 +6,8 @@ import VariantEditor from "./variant-editor";
 import ProductImageUpload from "@/components/ProductImageUpload";
 import EditSubmitButton from "./edit-submit-button";
 
+export const instant = false;
+
 type EditProductPageProps = {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ error?: string }>;
@@ -152,7 +154,10 @@ export default async function EditProductPage({
             Upload a new photo to replace the current image, or leave as-is.
           </p>
           <div className="mt-4">
-            <ProductImageUpload currentImageUrl={product.images[0]?.imageUrl ?? ""} />
+            <ProductImageUpload
+              currentImageUrl={product.images[0]?.imageUrl ?? ""}
+              currentPublicId={product.images[0]?.publicId ?? ""}
+            />
           </div>
 
           <label htmlFor="imageAlt" className={`${labelClass} mt-5`}>

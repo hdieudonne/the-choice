@@ -4,6 +4,8 @@ import ProductImageUpload from "@/components/ProductImageUpload";
 import VariantFields from "./variant-fields";
 import SubmitButtonWrapper from "./submit-button";
 
+export const instant = false;
+
 type NewProductPageProps = {
   searchParams: Promise<{
     error?: string;
